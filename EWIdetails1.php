@@ -58,35 +58,42 @@ include "connect.php";
 
 <body>
 	<?php
-
-	if (isset($_POST['add_payment'])) {
-		$Ewi_id = $_POST['Ewi_id'];
-		$date = date('Y-m-d');
-		$update_ewi = "UPDATE Ewi SET payment_status=1, payment_issued_at = '" . $date . "' WHERE id = '" . $Ewi_id . "'";
-		$result = mysqli_query($conn, $update_ewi);
-		if($result){
-
-		}else{
-			echo 'Something Wrong' . $conn->error ." Id is " .$Ewi_id;
-		}
-
-
-		// $loan_id = $_POST['loanId'];
-		// $query_loan_ewi = "SELECT * FROM Ewi WHERE loan_id = '" . $loan_id . "'";
-		// $result = mysqli_query($conn, $query_loan_ewi);
-		// $row = mysqli_fetch_assoc($result);
-	
-	}
-
 	if (isset($_POST['view_ewi'])) {
+		$_SESSION['loan_id'] = $_POST['loanId']; //Tunza loam id for refreshing the page after payment has been made
 		$loan_id = $_POST['loanId'];
 		$query_loan_ewi = "SELECT * FROM Ewi WHERE loan_id = '" . $loan_id . "'";
 		$result = mysqli_query($conn, $query_loan_ewi);
-		$row = mysqli_fetch_assoc($result);
-		// $applicant_id = $row[0]['applicant_id'];
-		// $query_applicant_name = "SELECT applicant_full_name FROM applicants_details WHERE applicant_id = '" . $applicant_id . "'";
-		// $result1 = mysqli_query($conn, $query_applicant_name);
-		// $row1 = mysqli_fetch_assoc($result1);
+
+		//PULL THE APLLICANT NAME
+		$query_loan_applicant_id = "SELECT applicant_id FROM Ewi WHERE loan_id = '" . $loan_id . "'";
+		$result3 = mysqli_query($conn, $query_loan_applicant_id);
+		$applicant_id = mysqli_fetch_assoc($result3)['applicant_id'];
+		$query_applicant_name = "SELECT applicant_full_name FROM applicants_details WHERE applicant_id = '" . $applicant_id . "'";
+		$result1 = mysqli_query($conn, $query_applicant_name);
+		$row1 = mysqli_fetch_assoc($result1);
+	}
+
+
+
+	if (isset($_POST['add_payment'])) {
+		$Ewi_id = $_POST['Ewi_id'];
+		$date = date("Y-m-d");
+		$update_ewi = "UPDATE Ewi SET payment_status=1, payment_issued_at = '" . $date . "' WHERE id = '" . $Ewi_id . "'";
+		$result = mysqli_query($conn, $update_ewi);
+
+
+		//FUTA DATA FROM DATABASE FOR AUTOMATIC UPDATE 
+		$loan_id = $_SESSION['loan_id'];
+		$query_loan_ewi = "SELECT * FROM Ewi WHERE loan_id = '" . $loan_id . "'";
+		$result = mysqli_query($conn, $query_loan_ewi);
+
+		//PULL THE APLLICANT NAME
+		$query_loan_applicant_id = "SELECT applicant_id FROM Ewi WHERE loan_id = '" . $loan_id . "'";
+		$result3 = mysqli_query($conn, $query_loan_applicant_id);
+		$applicant_id = mysqli_fetch_assoc($result3)['applicant_id'];
+		$query_applicant_name = "SELECT applicant_full_name FROM applicants_details WHERE applicant_id = '" . $applicant_id . "'";
+		$result1 = mysqli_query($conn, $query_applicant_name);
+		$row1 = mysqli_fetch_assoc($result1);
 	}
 	?>
 
@@ -95,7 +102,7 @@ include "connect.php";
 	<div class="col-md-12">
 		<div class="card">
 			<div class="card-header">
-				<b>EWI Details for </b><?php echo "row1['applicant_full_name'] " ?>
+				<b>EWI Details for </b><?php echo $row1['applicant_full_name'] ?>
 				<span class="float:right">
 					<a class="btn btn-primary btn-block btn-sm col-sm-2 float-right" href="" id="">
 						<i class="fa fa-plus"></i> EWI
@@ -134,10 +141,10 @@ include "connect.php";
 										<p> <b><?php echo $row['installment_week']; ?></b></p>
 									</td>
 									<td class="">
-										<p> <b><?php echo $row['date_to_return'];; ?></b></p>
+										<p> <b><?php echo $row['date_to_return']; ?></b></p>
 									</td>
 									<td class="">
-										<p> <b><?php echo ' - '; ?></b></p>
+										<p> <b><?php echo $row['payment_issued_at']; ?></b></p>
 									</td>
 									<td class="">
 										<?php if ($row['payment_status'] == 0) { ?>
