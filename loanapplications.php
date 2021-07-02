@@ -101,19 +101,18 @@
                     $loan_interest = $total_loan * 0.1;
                     $loan_tenure = $row['loan_tenure'];
                     $amount_per_installment = ($total_loan + $loan_interest) / $loan_tenure;
-
-
+                    $date = date("Y-m-d");
                     for ($i = 1; $i <= $loan_tenure; $i++) {
-                        $date = date("Y-m-d");
                         $installment_week = "Week " . $i;
-                        $query_insert_loan_ewi = "INSERT INTO Ewi (applicant_id, loan_id ,amount_per_installment, installment_week ) 
-                        VALUES ('$applicant_id', '$loan_id' , '$amount_per_installment' , '$installment_week'  )";
+                        $query_insert_loan_ewi = "INSERT INTO Ewi (applicant_id, loan_id ,amount_per_installment, installment_week, date_to_return) 
+                        VALUES ('$applicant_id', '$loan_id' , '$amount_per_installment' , '$installment_week' , '$date' )";
                         $result = mysqli_query($conn, $query_insert_loan_ewi);
                         if ($result) {
                         } else {
                             echo 'Something Wrong' . $conn->error;
                         }
-                        // $date = strtotime("+7 day", strtotime($today));
+                        $nextdate = strtotime("+1 weeks", strtotime($date));
+                        $date = date("Y-m-d", $nextdate);
                     }
                 }
             }

@@ -134,7 +134,7 @@ include "connect.php";
 										<p> <b><?php echo $row['installment_week']; ?></b></p>
 									</td>
 									<td class="">
-										<p> <b><?php echo " - "; ?></b></p>
+										<p> <b><?php echo $row['date_to_return'];; ?></b></p>
 									</td>
 									<td class="">
 										<p> <b><?php echo ' - '; ?></b></p>
