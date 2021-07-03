@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<?php 
+<?php
 include "navbar.php";
+include "connect.php";
 ?>
 <html>
 
@@ -14,12 +15,9 @@ include "navbar.php";
     <link href="css/styles.css" rel="stylesheet">
 
     <!--Custom Font-->
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,300i,400,400i,500,500i,600,600i,700,700i"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
-    <link
-        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
     <link rel="stylesheet" href="assets/font-awesome/css/all.min.css">
 
     <!-- Vendor CSS Files -->
@@ -49,15 +47,13 @@ include "navbar.php";
 
 
 
-
-
-    <!--[if lt IE 9]>
-	<script src="js/html5shiv.js"></script>
-	<script src="js/respond.min.js"></script>
-	<![endif]-->
 </head>
 
 <body>
+    <?php
+    $sql = "SELECT * FROM guarantor_details,loan_details WHERE guarantor_details.guarantor_id = loan_details.guarantor_id AND loan_status = 1";
+    $result = mysqli_query($conn, $sql);
+    ?>
 
 
     <!-- Table Panel -->
@@ -66,8 +62,7 @@ include "navbar.php";
             <div class="card-header">
                 <b>Received Payments Details</b>
 
-                <span class="float:right"><a class="btn btn-primary btn-block btn-sm col-sm-2 float-right"
-                        href="javascript:void(0)" id="">
+                <span class="float:right"><a class="btn btn-primary btn-block btn-sm col-sm-2 float-right" href="javascript:void(0)" id="">
                         <i class="fa fa-plus"></i> Payments
                     </a></span>
             </div>
@@ -87,34 +82,64 @@ include "navbar.php";
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td class="text-center">1</td>
+                        <?php
+                        if (mysqli_num_rows($result) > 0) {
+                            $sn = 0;
+                            while ($row = mysqli_fetch_assoc($result)) {
+                                $sn++;
+                                $query_applicant_name = "SELECT applicant_full_name FROM applicants_details WHERE applicant_id = '" . $row['app_id'] . "'";
+                                $result_applicant_name = mysqli_query($conn, $query_applicant_name);
+                                $loan_id = $row['Id'];
 
-                            <td class="">
-                                <p> <b>HEnry Kihanga</b></p>
-                            </td>
-                            <td class="">
-                                <p> <b>Sheshe </b></p>
-                            </td>
-                            <td class="">
-                                <p> <b>120000</b></p>
-                            </td>
-                            <td class="">
-                                <p> <b>Incomplete</b></p>
-                            </td>
-                            <td class="">
-                                <p> <b>100000</b></p>
-                            </td>
-                            <td class="text-center">
-                                <button class="btn btn-sm btn-outline-primary view_payment" type="button"
-                                    data-id="<?php echo $row['id'] ?>">View</button>
-                                <button class="btn btn-sm btn-outline-primary edit_tenant" type="button"
-                                    data-id="<?php echo $row['id'] ?>">Edit</button>
-                                <button class="btn btn-sm btn-outline-danger delete_tenant" type="button"
-                                    data-id="<?php echo $row['id'] ?>">Delete</button>
-                            </td>
-                        </tr>
 
+                                //QUERY EWI DETAILS
+                                $loan_id = $row['Id'];
+                                $query_loan_ewi = "SELECT * FROM Ewi WHERE loan_id = '" . $loan_id . "'";
+                                $result_loan_ewi = mysqli_query($conn, $query_loan_ewi);
+                                $amount_paid = 0;
+                                $amount_remain = 0;
+                                while ($ewi = mysqli_fetch_assoc($result_loan_ewi)) {
+                                    $amount_per_installment = $ewi['amount_per_installment'];
+                                    if ($ewi['payment_status']) {
+                                        $amount_paid = $amount_paid + $ewi['amount_per_installment'];
+                                    } else {
+                                        $amount_remain = $amount_remain + $ewi['amount_per_installment'];
+                                    }
+                                }
+                        ?>
+
+                                <tr>
+                                    <td class="text-center"><?php echo $sn ?></td>
+
+                                    <td class="">
+                                        <p> <b><?php echo mysqli_fetch_assoc($result_applicant_name)['applicant_full_name']; ?> </b></p>
+                                    </td>
+                                    <td class="">
+                                        <p> <b><?php echo $row['guarantor_full_name']; ?></b></p>
+                                    </td>
+                                    <td class="">
+                                        <p> <b><?php echo $amount_paid ?></b></p>
+                                    </td>
+                                    <td class="">
+                                        <?php if ($amount_remain == 0) { ?>
+                                            <p> <b>complete</b></p>
+                                        <?php } else { ?>
+                                            <p> <b>Incomplete</b></p>
+                                        <?php } ?>
+                                    </td>
+                                    <td class="">
+                                        <p> <b><?php echo $amount_remain ?></b></p>
+                                    </td>
+                                    <td class="text-center">
+                                        <button class="btn btn-sm btn-outline-primary view_payment" type="button" data-id="<?php echo $row['id'] ?>">View</button>
+                                        <button class="btn btn-sm btn-outline-primary edit_tenant" type="button" data-id="<?php echo $row['id'] ?>">Edit</button>
+                                        <button class="btn btn-sm btn-outline-danger delete_tenant" type="button" data-id="<?php echo $row['id'] ?>">Delete</button>
+                                    </td>
+                                </tr>
+                        <?php
+                            }
+                        } else echo "<tr><td>No Payment Details Found </td></tr>";
+                        ?>
                     </tbody>
                 </table>
             </div>
@@ -126,18 +151,18 @@ include "navbar.php";
 
 
     <style>
-    td {
-        vertical-align: middle !important;
-    }
+        td {
+            vertical-align: middle !important;
+        }
 
-    td p {
-        margin: unset
-    }
+        td p {
+            margin: unset
+        }
 
-    img {
-        max-width: 100px;
-        max-height: 150px;
-    }
+        img {
+            max-width: 100px;
+            max-height: 150px;
+        }
     </style>
 
 
