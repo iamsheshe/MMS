@@ -101,29 +101,25 @@
                     $loan_interest = $total_loan * 0.1;
                     $loan_tenure = $row['loan_tenure'];
                     $amount_per_installment = ($total_loan + $loan_interest) / $loan_tenure;
-
-
+                    $date = date("Y-m-d");
                     for ($i = 1; $i <= $loan_tenure; $i++) {
-                        $date = date("Y-m-d");
                         $installment_week = "Week " . $i;
-                        $query_insert_loan_ewi = "INSERT INTO Ewi (applicant_id, loan_id ,amount_per_installment, installment_week ) 
-                        VALUES ('$applicant_id', '$loan_id' , '$amount_per_installment' , '$installment_week'  )";
+                        $query_insert_loan_ewi = "INSERT INTO Ewi (applicant_id, loan_id ,amount_per_installment, installment_week, date_to_return) 
+                        VALUES ('$applicant_id', '$loan_id' , '$amount_per_installment' , '$installment_week' , '$date' )";
                         $result = mysqli_query($conn, $query_insert_loan_ewi);
                         if ($result) {
                         } else {
                             echo 'Something Wrong' . $conn->error;
                         }
-                        // $date = strtotime("+7 day", strtotime($today));
+                        $nextdate = strtotime("+1 weeks", strtotime($date));
+                        $date = date("Y-m-d", $nextdate);
                     }
                 }
             }
-            $sql_name = "SELECT applicant_full_name FROM applicants_details WHERE applicant_id = '" . $_SESSION['user_id'] . "'";
-            $sql = "SELECT * FROM guarantor_details,loan_details WHERE guarantor_details.guarantor_id = loan_details.guarantor_id ";
-            // AND app_id = '".$_SESSION['user_id']."' 
-            $result = mysqli_query($conn, $sql);
-            $result_name = mysqli_query($conn, $sql_name);
-            $queryResults = mysqli_num_rows($result);
 
+            
+            $sql = "SELECT * FROM guarantor_details,loan_details WHERE guarantor_details.guarantor_id = loan_details.guarantor_id ";
+            $result = mysqli_query($conn, $sql);
             ?>
             <div class="col-md-12">
                 <div class="card">
@@ -150,20 +146,24 @@
                             <tbody>
                                 <?php
 
-                                if ($queryResults > 0) {
-
+                                if (mysqli_num_rows($result) > 0) {
                                     $sn = 0;
-                                    $applicant_name = mysqli_fetch_assoc($result_name);
                                     while ($row = mysqli_fetch_assoc($result)) {
-                                        $id = $row['Id'];
-
                                         $sn++;
+                                        //QUERY APPLICANT NAME
+                                        $query_applicant_name = "SELECT applicant_full_name FROM applicants_details WHERE applicant_id = '" .$row['app_id']. "'";
+                                        $result_applicant_name = mysqli_query($conn, $query_applicant_name);
+                                        $loan_id = $row['Id'];
+
+                             
+                                       
+                                      
                                 ?>
                                         <tr>
                                             <td class="text-center"><?php echo $sn ?></td>
 
                                             <td class="">
-                                                <p> <b> <?php echo $applicant_name['applicant_full_name']; ?> </b></p>
+                                                <p> <b> <?php echo mysqli_fetch_assoc($result_applicant_name)['applicant_full_name']; ?> </b></p>
                                             </td>
                                             <td class="">
                                                 <p> <b><?php echo $row['guarantor_full_name']; ?></b> </p>
@@ -186,7 +186,7 @@
                                             <td class="text-center">
                                                 <?php if ($row['loan_status'] == 0) { ?>
                                                     <form action="loanapplications.php" method="POST" style="display: hidden;">
-                                                        <input type="text" name="loanId" value=<?php echo $id ?> style="display: none;"></input>
+                                                        <input type="text" name="loanId" value=<?php echo $loan_id ?> style="display: none;"></input>
                                                         <button type="text" class="btn btn-sm btn-outline-primary" name="approve_loan">
                                                             Approve
                                                         </button>
@@ -194,7 +194,7 @@
                                                 <?php } else { ?>
 
                                                     <form action="EWIdetails1.php" method="POST" style="display: hidden;">
-                                                        <input type="text" name="loanId" value=<?php echo $id ?> style="display: none;"></input>
+                                                        <input type="text" name="loanId" value=<?php echo $loan_id ?> style="display: none;"></input>
                                                         <button type="text" class="btn btn-sm btn-outline-primary" name="view_ewi">
                                                             VIEW EWI
                                                         </button>
