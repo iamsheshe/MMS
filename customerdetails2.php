@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
+
 <?php 
+include "navbar.php";
 include "connect.php";
 include "header.php";
 session_start();
@@ -26,7 +27,6 @@ Google Fonts
             <div class="clear"></div>
         </div>
         <div class="divider"></div>
-
         <ul class="nav menu">
             <li class=""><a href="dashboard.php"><em class="fa fa-dashboard">&nbsp;</em> Dashboard</a></li>
             <?php
@@ -85,44 +85,26 @@ Google Fonts
         </ul>
     </div>
 </nav>
-
-
-
-
-
-
-
-
-
-
-
-<?php
-						
-						$users = "SELECT * FROM applicants_details";
-						$result = mysqli_query($conn , $users);
-						$queryResults = mysqli_num_rows($result);
-						
-							
+<?php						
+$users = "SELECT * FROM applicants_details";
+$result = mysqli_query($conn , $users);
+$queryResults = mysqli_num_rows($result);					
 ?>
-
-
-
-
 <div class="col-md-12">
     <div class="card">
         <div class="card-header">
             <b>Customer Details</b>
-            <span class="float:right"><a class="btn btn-primary btn-block btn-sm col-sm-2 float-right"
-                    href="javascript:void(0)" id="new_tenant">
+            <span class="float:right">
+                <a class="btn btn-primary btn-block btn-sm col-sm-2 float-right" href="javascript:void(0)" id="">
                     <i class="fa fa-plus"></i> Customer
-                </a></span>
+                </a>
+            </span>
         </div>
         <div class="card-body">
             <table class="table table-condensed table-bordered table-hover">
                 <thead>
                     <tr>
                         <th class="text-center">#</th>
-
                         <th class="">Full Name</th>
                         <th class="">Gender</th>
                         <th class="">Date of Birth</th>
@@ -133,9 +115,7 @@ Google Fonts
                         <th class="">Mobile Number</th>
                         <th class="text-center">Action</th>
                     </tr>
-
                 </thead>
-
                 <tbody>
                     <?php
 										if($queryResults > 0){
@@ -193,9 +173,6 @@ Google Fonts
 											echo "<tr><td> No user</td></tr>";
 										}	
 										?>
-
-
-
 
                 </tbody>
             </table>

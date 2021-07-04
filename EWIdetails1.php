@@ -2,6 +2,81 @@
 <?php
 include "navbar.php";
 include "connect.php";
+include "header.php";
+session_start();
+?>
+
+<nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
+	<div class="container-fluid">
+		<div class="navbar-header"> <a class="navbar-brand" href="#"><span>MICROFINANCE COMPANY</span></a>
+		</div>
+	</div>
+	<!-- /.container-fluid -->
+
+	<div id="sidebar-collapse" class="col-sm-3 col-lg-2 sidebar">
+		<div class="profile-sidebar">
+			<div class="clear"></div>
+		</div>
+		<div class="divider"></div>
+		<ul class="nav menu">
+			<li class=""><a href="dashboard.php"><em class="fa fa-dashboard">&nbsp;</em> Dashboard</a></li>
+			<?php
+			$typ = "user";
+			if ($_SESSION['login_type'] == $typ) { ?>
+				<li><a href="customerdetails.php"><em class="fa fa-user-friends">&nbsp;</em> Personal Details</a></li>
+			<?php
+			} else { ?>
+
+				<li><a href="customerdetails2.php"><em class="fa fa-user-friends">&nbsp;</em> Customer
+						Details</a>
+				</li>
+			<?php } ?>
+			<?php
+			$typ = "user";
+			if ($_SESSION['login_type'] == $typ) { ?>
+				<li><a href="loanapplication.php"><em class="fa fa-hand-holding-usd">&nbsp;</em>Apply online</a></li>
+			<?php
+			} ?>
+			<?php
+			$typ = "user";
+			if ($_SESSION['login_type'] == $typ) { ?>
+				<li><a href="loandetails.php"><em class="fa fa-hand-holding-usd">&nbsp;</em> Loan Details</a></li>
+			<?php
+			} else { ?>
+				<li><a href="loandetails2.php"><em class="fa fa-hand-holding-usd">&nbsp;</em> Loan Details</a></li>
+			<?php }
+			$typ = "admin";
+			if ($_SESSION['login_type'] == $typ) : ?>
+				<li><a href="loanapplications.php"><em class="fa fa-toggle-off">&nbsp;</em> Loan Applications</a></li>
+			<?php endif; ?>
+
+			<?php
+			$typ = "user";
+			if ($_SESSION['login_type'] == $typ) { ?>
+				<li><a href="EWIdetails.php"><em class="fa fa-clone">&nbsp;</em> EWI Details </a></li>
+			<?php
+			} else { ?>
+				<li class="active"><a href="EWIdetails1.php"><em class="fa fa-clone">&nbsp;</em> EWI Details </a></li>
+
+			<?php }
+			$typ = "user";
+			if ($_SESSION['login_type'] == $typ) { ?>
+				<li><a href="paymentdetails.php"><em class="fa fa-clone">&nbsp;</em>Paid Payment</a></li>
+			<?php
+			} else { ?>
+				<li><a href="paymentdetails1.php"><em class="fa fa-clone">&nbsp;</em> Payment Details</a></li>
+			<?php } ?>
+			<?php
+			$typ = "admin";
+			if ($_SESSION['login_type'] == $typ) : ?>
+				<li><a href="report.html"><em class="fa fa-clone">&nbsp;</em> Report</a></li>
+			<?php endif; ?>
+
+			<li><a href="logout.php"><em class="fa fa-power-off">&nbsp;</em> Logout</a></li>
+		</ul>
+	</div>
+</nav>
+<?php
 session_start();
 ?>
 <html>
@@ -172,7 +247,6 @@ session_start();
 			</div>
 		</div>
 	</div>
-	<!-- Table Panel -->
 	</div>
 	</div>
 
@@ -193,7 +267,6 @@ session_start();
 	</style>
 
 	</div-->
-	<!--/.main-->
 	<style>
 		td {
 			vertical-align: middle !important;
@@ -213,7 +286,7 @@ session_start();
 
 
 	</div>
-	<!--/.main-->
+
 
 	<script src="js/jquery-1.11.1.min.js"></script>
 	<script src="js/bootstrap.min.js"></script>
@@ -225,5 +298,6 @@ session_start();
 	<script src="js/custom.js"></script>
 
 </body>
+<?php include "footer.php"; ?>
 
 </html>
