@@ -1,15 +1,5 @@
 <!DOCTYPE html>
 <?php
-<<<<<<< HEAD
-//      include "navbar.php";
-//     include "connect.php";
-//     include "header.php";
-//     session_start();
-//     ?>
-// <nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
-//     <div class="container-fluid">
-//         <div class="navbar-header"> <a class="navbar-brand" href="#"><span>MICROFINANCE COMPANY</span></a>
-=======
 include "navbar.php";
 include "connect.php";
 ?>
@@ -153,7 +143,6 @@ include "connect.php";
                     </tbody>
                 </table>
             </div>
->>>>>>> origin/main
         </div>
     </div>
     <!-- /.container-fluid -->
